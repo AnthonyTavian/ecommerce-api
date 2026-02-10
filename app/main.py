@@ -1,5 +1,9 @@
 from fastapi import FastAPI
 from app.config import settings
+from app.database import engine, Base
+from app.models import User, Category, Product
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -17,4 +21,4 @@ def read_root():
 
 @app.get("/health")
 def health_check():
-    return {"status": "ok"}
+    return {"status": "ok", "database": "connected"}
