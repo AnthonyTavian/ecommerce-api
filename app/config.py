@@ -5,7 +5,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "postgresql://user:password@localhost:5432/ecommerce"
     
     # JWT
-    SECRET_KEY: str = "sua-chave-secreta-aqui-mude-isso"
+    SECRET_KEY: str = "MuitoSecreto"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     

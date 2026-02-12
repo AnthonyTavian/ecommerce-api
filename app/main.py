@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from app.config import settings
 from app.database import engine, Base
 from app.models import User, Category, Product
+from app.routers import auth
 
 Base.metadata.create_all(bind=engine)
 
@@ -10,6 +11,8 @@ app = FastAPI(
     version=settings.APP_VERSION,
     description="API REST completa para e-commerce com autenticação JWT"
 )
+
+app.include_router(auth.router)
 
 @app.get("/")
 def read_root():
