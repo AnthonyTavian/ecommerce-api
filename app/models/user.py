@@ -13,4 +13,4 @@ class User(Base):
     is_active = Column(Boolean, default=True)
     is_admin = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
-    
+    orders = relationship("Order", back_populates="user")
