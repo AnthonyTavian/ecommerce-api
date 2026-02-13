@@ -1,10 +1,14 @@
-from app.database import SessionLocal
+from app.database import SessionLocal, engine, Base
 from app.models.user import User
 from app.models.category import Category
 from app.models.product import Product
 from app.utils.security import get_password_hash
 
 def seed_database():
+    # CRIA AS TABELAS PRIMEIRO
+    print("🔨 Criando tabelas no banco...")
+    Base.metadata.create_all(bind=engine)
+    
     db = SessionLocal()
     
     try:
