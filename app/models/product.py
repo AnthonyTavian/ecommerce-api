@@ -14,6 +14,5 @@ class Product(Base):
     image_url = Column(String(500), nullable=True)
     category_id = Column(Integer, ForeignKey("categories.id"), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow) 
     category = relationship("Category", back_populates="products")

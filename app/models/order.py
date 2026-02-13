@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Enum as SQLEnum
 from sqlalchemy.orm import relationship
+from sqlalchemy.ext.hybrid import hybrid_property
 from datetime import datetime
 from enum import Enum
 from app.database import Base
@@ -31,7 +32,11 @@ class OrderItem(Base):
     order_id = Column(Integer, ForeignKey("orders.id"), nullable=False)
     product_id = Column(Integer, ForeignKey("products.id"), nullable=False)
     quantity = Column(Integer, nullable=False)
-    price = Column(Float, nullable=False)  
+    price = Column(Float, nullable=False)
     
     order = relationship("Order", back_populates="items")
     product = relationship("Product")
+    
+    @property
+    def product_name(self):
+        return self.product.name if self.product else "Produto removido"

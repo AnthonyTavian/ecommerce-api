@@ -34,3 +34,9 @@ Thumbs.db
 
 # Docker
 docker-compose.yml
+
+# Testes
+test.db
+.pytest_cache/
+htmlcov/
+.coverage

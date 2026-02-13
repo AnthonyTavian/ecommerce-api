@@ -6,7 +6,7 @@ from app.database import get_db
 from app.models.user import User
 from app.models.order import Order, OrderItem, OrderStatus
 from app.models.product import Product
-from app.schemas.order import OrderCreate, OrderResponse, OrderStatusUpdate, OrderItemResponse
+from app.schemas.order import OrderCreate, OrderResponse, OrderStatusUpdate
 from app.utils.dependencies import get_current_user, get_current_admin_user
 
 router = APIRouter(prefix="/orders", tags=["Orders"])
@@ -17,9 +17,7 @@ def create_order(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """
-    Cria um novo pedido (usuário logado)
-    """
+    """Cria um novo pedido (usuário logado)"""
     total = 0
     order_items_data = []
     
@@ -30,6 +28,7 @@ def create_order(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"Produto {item.product_id} não encontrado"
             )
+        
         if product.stock < item.quantity:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -43,7 +42,7 @@ def create_order(
             "product": product,
             "product_id": product.id,
             "quantity": item.quantity,
-            "price": product.price  
+            "price": product.price
         })
     
     new_order = Order(
@@ -52,7 +51,7 @@ def create_order(
         status=OrderStatus.PENDING
     )
     db.add(new_order)
-    db.flush()  
+    db.flush()
     
     for item_data in order_items_data:
         order_item = OrderItem(
@@ -69,11 +68,7 @@ def create_order(
     db.commit()
     db.refresh(new_order)
     
-    response = OrderResponse.model_validate(new_order)
-    for i, item in enumerate(response.items):
-        item.product_name = order_items_data[i]["product"].name
-    
-    return response
+    return new_order  # ← product_name vem automaticamente da propriedade!
 
 @router.get("/", response_model=List[OrderResponse])
 def get_my_orders(
@@ -82,22 +77,12 @@ def get_my_orders(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """
-    Lista pedidos do usuário logado
-    """
+    """Lista pedidos do usuário logado"""
     orders = db.query(Order).filter(
         Order.user_id == current_user.id
     ).offset(skip).limit(limit).all()
     
-    response_orders = []
-    for order in orders:
-        order_response = OrderResponse.model_validate(order)
-        for item in order_response.items:
-            product = db.query(Product).filter(Product.id == item.product_id).first()
-            item.product_name = product.name if product else "Produto removido"
-        response_orders.append(order_response)
-    
-    return response_orders
+    return orders
 
 @router.get("/{order_id}", response_model=OrderResponse)
 def get_order(
@@ -105,9 +90,7 @@ def get_order(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """
-    Busca pedido por ID (somente do usuário logado)
-    """
+    """Busca pedido por ID (somente do usuário logado)"""
     order = db.query(Order).filter(Order.id == order_id).first()
     
     if not order:
@@ -122,12 +105,7 @@ def get_order(
             detail="Você não tem permissão para ver este pedido"
         )
     
-    order_response = OrderResponse.model_validate(order)
-    for item in order_response.items:
-        product = db.query(Product).filter(Product.id == item.product_id).first()
-        item.product_name = product.name if product else "Produto removido"
-    
-    return order_response
+    return order
 
 @router.get("/admin/all", response_model=List[OrderResponse])
 def get_all_orders(
@@ -137,9 +115,7 @@ def get_all_orders(
     db: Session = Depends(get_db),
     _current_user: User = Depends(get_current_admin_user)
 ):
-    """
-    Lista todos os pedidos (somente admin)
-    """
+    """Lista todos os pedidos (somente admin)"""
     query = db.query(Order)
     
     if status:
@@ -147,15 +123,7 @@ def get_all_orders(
     
     orders = query.offset(skip).limit(limit).all()
     
-    response_orders = []
-    for order in orders:
-        order_response = OrderResponse.model_validate(order)
-        for item in order_response.items:
-            product = db.query(Product).filter(Product.id == item.product_id).first()
-            item.product_name = product.name if product else "Produto removido"
-        response_orders.append(order_response)
-    
-    return response_orders
+    return orders
 
 @router.put("/{order_id}/status", response_model=OrderResponse)
 def update_order_status(
@@ -164,9 +132,7 @@ def update_order_status(
     db: Session = Depends(get_db),
     _current_user: User = Depends(get_current_admin_user)
 ):
-    """
-    Atualiza status do pedido (somente admin)
-    """
+    """Atualiza status do pedido (somente admin)"""
     order = db.query(Order).filter(Order.id == order_id).first()
     
     if not order:
@@ -179,9 +145,4 @@ def update_order_status(
     db.commit()
     db.refresh(order)
     
-    order_response = OrderResponse.model_validate(order)
-    for item in order_response.items:
-        product = db.query(Product).filter(Product.id == item.product_id).first()
-        item.product_name = product.name if product else "Produto removido"
-    
-    return order_response
+    return order
