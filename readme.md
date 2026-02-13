@@ -1,5 +1,11 @@
 # 🛒 E-commerce API
 
+![Tests](https://img.shields.io/badge/tests-15%20passed-brightgreen)
+![Coverage](https://img.shields.io/badge/coverage-87%25-yellowgreen)
+![Python](https://img.shields.io/badge/python-3.11-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.109-009688)
+
+
 API REST completa para gerenciamento de e-commerce com autenticação JWT, sistema de pedidos e controle de estoque.
 
 ## 🚀 Tecnologias
