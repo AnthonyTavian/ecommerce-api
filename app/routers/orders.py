@@ -17,7 +17,6 @@ def create_order(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Cria um novo pedido (usuário logado)"""
     total = 0
     order_items_data = []
     
@@ -90,7 +89,6 @@ def get_order(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Busca pedido por ID (somente do usuário logado)"""
     order = db.query(Order).filter(Order.id == order_id).first()
     
     if not order:
@@ -115,7 +113,6 @@ def get_all_orders(
     db: Session = Depends(get_db),
     _current_user: User = Depends(get_current_admin_user)
 ):
-    """Lista todos os pedidos (somente admin)"""
     query = db.query(Order)
     
     if status:
@@ -132,7 +129,6 @@ def update_order_status(
     db: Session = Depends(get_db),
     _current_user: User = Depends(get_current_admin_user)
 ):
-    """Atualiza status do pedido (somente admin)"""
     order = db.query(Order).filter(Order.id == order_id).first()
     
     if not order:
