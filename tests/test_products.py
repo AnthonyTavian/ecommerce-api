@@ -2,7 +2,6 @@ from app.models.category import Category
 from app.models.product import Product
 
 def test_create_product_as_admin(client, admin_token, db):
-    """Testa criação de produto por admin"""
     category = Category(name="Test Category", description="Test")
     db.add(category)
     db.commit()
@@ -24,7 +23,6 @@ def test_create_product_as_admin(client, admin_token, db):
     assert data["price"] == 99.99
 
 def test_create_product_as_user_forbidden(client, user_token, db):
-    """Testa que usuário comum não pode criar produto"""
     category = Category(name="Test Category", description="Test")
     db.add(category)
     db.commit()
@@ -42,7 +40,6 @@ def test_create_product_as_user_forbidden(client, user_token, db):
     assert response.status_code == 403
 
 def test_list_products_public(client, db):
-    """Testa listagem pública de produtos"""
     category = Category(name="Test Category", description="Test")
     db.add(category)
     db.commit()
@@ -63,7 +60,6 @@ def test_list_products_public(client, db):
     assert data[0]["name"] == "Test Product"
 
 def test_filter_products_by_price(client, db):
-    """Testa filtro de produtos por preço"""
     category = Category(name="Test Category", description="Test")
     db.add(category)
     db.commit()
@@ -81,7 +77,6 @@ def test_filter_products_by_price(client, db):
     assert data[0]["name"] == "Cheap"
 
 def test_search_products_by_name(client, db):
-    """Testa busca de produtos por nome"""
     category = Category(name="Test Category", description="Test")
     db.add(category)
     db.commit()
