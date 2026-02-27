@@ -1,5 +1,4 @@
 def test_register_user(client):
-    """Testa registro de novo usuário"""
     response = client.post(
         "/auth/register",
         json={
@@ -15,7 +14,6 @@ def test_register_user(client):
     assert "id" in data
 
 def test_register_duplicate_email(client, test_user):
-    """Testa erro ao registrar email duplicado"""
     response = client.post(
         "/auth/register",
         json={
@@ -28,7 +26,6 @@ def test_register_duplicate_email(client, test_user):
     assert "já cadastrado" in response.json()["detail"]
 
 def test_login_success(client, test_user):
-    """Testa login com credenciais corretas"""
     response = client.post(
         "/auth/login",
         json={"email": "test@test.com", "password": "test123"}
@@ -39,7 +36,6 @@ def test_login_success(client, test_user):
     assert data["token_type"] == "bearer"
 
 def test_login_wrong_password(client, test_user):
-    """Testa login com senha incorreta"""
     response = client.post(
         "/auth/login",
         json={"email": "test@test.com", "password": "wrongpassword"}
@@ -47,7 +43,6 @@ def test_login_wrong_password(client, test_user):
     assert response.status_code == 401
 
 def test_login_nonexistent_user(client):
-    """Testa login de usuário que não existe"""
     response = client.post(
         "/auth/login",
         json={"email": "noexist@test.com", "password": "test123"}
@@ -55,7 +50,6 @@ def test_login_nonexistent_user(client):
     assert response.status_code == 401
 
 def test_get_current_user(client, user_token):
-    """Testa obter dados do usuário logado"""
     response = client.get(
         "/auth/me",
         headers={"Authorization": f"Bearer {user_token}"}
@@ -65,7 +59,6 @@ def test_get_current_user(client, user_token):
     assert data["email"] == "test@test.com"
 
 def test_get_current_user_invalid_token(client):
-    """Testa acesso com token inválido"""
     response = client.get(
         "/auth/me",
         headers={"Authorization": "Bearer invalid_token"}
