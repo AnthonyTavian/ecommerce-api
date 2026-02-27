@@ -2,7 +2,6 @@ from app.models.category import Category
 from app.models.product import Product
 
 def test_create_order(client, user_token, db):
-    """Testa criação de pedido"""
     category = Category(name="Test Category", description="Test")
     db.add(category)
     db.commit()
@@ -29,7 +28,6 @@ def test_create_order(client, user_token, db):
     assert data["items"][0]["price"] == 100.00
 
 def test_create_order_insufficient_stock(client, user_token, db):
-    """Testa erro ao criar pedido sem estoque"""
     category = Category(name="Test Category", description="Test")
     db.add(category)
     db.commit()
@@ -51,7 +49,6 @@ def test_create_order_insufficient_stock(client, user_token, db):
     assert "insuficiente" in response.json()["detail"]
 
 def test_list_my_orders(client, user_token, db):
-    """Testa listagem de pedidos do usuário"""
     response = client.get(
         "/orders",
         headers={"Authorization": f"Bearer {user_token}"}
