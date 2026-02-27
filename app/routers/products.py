@@ -20,15 +20,6 @@ def get_products(
     search: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
-    """
-    Lista produtos com filtros opcionais (público)
-    
-    Filtros disponíveis:
-    - category_id: Filtra por categoria
-    - min_price: Preço mínimo
-    - max_price: Preço máximo
-    - search: Busca no nome do produto
-    """
     query = db.query(Product)
     
     if category_id:
@@ -48,9 +39,6 @@ def get_products(
 
 @router.get("/{product_id}", response_model=ProductWithCategory)
 def get_product(product_id: int, db: Session = Depends(get_db)):
-    """
-    Busca produto por ID (público)
-    """
     product = db.query(Product).filter(Product.id == product_id).first()
     if not product:
         raise HTTPException(
@@ -65,9 +53,6 @@ def create_product(
     db: Session = Depends(get_db),
     current_user = Depends(get_current_admin_user) 
 ):
-    """
-    Cria novo produto (somente admin)
-    """
     category = db.query(Category).filter(Category.id == product.category_id).first()
     if not category:
         raise HTTPException(
@@ -88,9 +73,6 @@ def update_product(
     db: Session = Depends(get_db),
     current_user = Depends(get_current_admin_user)  
 ):
-    """
-    Atualiza produto (somente admin)
-    """
     product = db.query(Product).filter(Product.id == product_id).first()
     if not product:
         raise HTTPException(
@@ -119,9 +101,6 @@ def delete_product(
     db: Session = Depends(get_db),
     current_user = Depends(get_current_admin_user)  
 ):
-    """
-    Deleta produto (somente admin)
-    """
     product = db.query(Product).filter(Product.id == product_id).first()
     if not product:
         raise HTTPException(
