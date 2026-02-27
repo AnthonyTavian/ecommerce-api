@@ -15,17 +15,11 @@ def get_categories(
     limit: int = 100,
     db: Session = Depends(get_db)
 ):
-    """
-    Lista todas as categorias (público)
-    """
     categories = db.query(Category).offset(skip).limit(limit).all()
     return categories
 
 @router.get("/{category_id}", response_model=CategorySchema)
 def get_category(category_id: int, db: Session = Depends(get_db)):
-    """
-    Busca categoria por ID (público)
-    """
     category = db.query(Category).filter(Category.id == category_id).first()
     if not category:
         raise HTTPException(
@@ -40,10 +34,6 @@ def create_category(
     db: Session = Depends(get_db),
     _current_user = Depends(get_current_admin_user)  
 ):
-    """
-    Cria nova categoria (somente admin)
-    """
-
     existing = db.query(Category).filter(Category.name == category.name).first()
     if existing:
         raise HTTPException(
@@ -64,9 +54,6 @@ def update_category(
     db: Session = Depends(get_db),
     current_user = Depends(get_current_admin_user)  # Só admin
 ):
-    """
-    Atualiza categoria (somente admin)
-    """
     category = db.query(Category).filter(Category.id == category_id).first()
     if not category:
         raise HTTPException(
@@ -87,9 +74,6 @@ def delete_category(
     db: Session = Depends(get_db),
     current_user = Depends(get_current_admin_user)  
 ):
-    """
-    Deleta categoria (somente admin)
-    """
     category = db.query(Category).filter(Category.id == category_id).first()
     if not category:
         raise HTTPException(
